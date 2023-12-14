@@ -8,11 +8,14 @@ file="tprbap_modules.f"
 #file="test.txt"
 echo "> Changing the value of NI in line 8 of $file to $total_count"
 sed -i "8s/\(NI=\)[0-9]*/\1$total_count/" "$file"
+cat ${file} | grep NI=
 echo "> Recompile after modifying $file"
 make clean && make
+mkdir -p obj 
+mv *.o *.mod obj/
 
 # Remove existing fort.43 file
-rm fort.43
+rm fort.43 fort.48
 file_name="fort.43"
 
 # Number of items per line
@@ -51,6 +54,7 @@ else
     echo -n " " >> "$file_name"
 fi
 
+cp fort.43 fort.48
 # Display the contents of the generated file
 cat "$file_name"
 

@@ -5,7 +5,8 @@
      &bsq,mb,nb,tcos,tsin,fc,ft,gb,g1mnin,g4mn,g1av,g4av,g2,g4,g2av,
      &s,vp,ftp,fpp,ci,cj,pth,pp,ppi,tempp,tpi,boot,bjav,sqgbsq,
      &dboot,rl31,rl32e,rl32i,jkmax,bsqav,bsqmax,djp,bdgradg,bdgradb,
-     &bgradbmn,bgradgmn,bdglnb,gbplat,rlampl,rnue)
+     &bgradbmn,bgradgmn,bdglnb,gbplat,rlampl,rnue
+     &,shalfs) !added by Lin 2023/12/14
 ! 
 ! .. IMPLICITS
       implicit none
@@ -18,7 +19,8 @@
      &,g4mn(*),boot(0:*),bjav(*),dboot(*),rl31(*),rl32e(*),rl32i(*)
      &,bsqav(*),bsqmax(*),tempp(*),pp(*),pth(*),ppi(*),sqgbsq(*)
      &,rlampl(*),rnue(*),bdgradb(*),bdgradg(*),bdglnb(*),bgradbmn(*)
-     &,bgradgmn(*)
+     &,bgradgmn(*)!,shalfs(*)! added by Lin 2023/12/14
+      REAL, DIMENSION(*) :: shalfs
       integer :: mb(*),nb(*),ni,njk,lmnb,npitch,jkmax(*)
 !           
 ! ... LOCAL SCALARS
@@ -73,6 +75,7 @@
         rlampl(i) = zero
         gbplat(i) = zero
         shalf     = 0.5 * (s(i) + s(i-1))
+        shalfs(i) = 0.5 * (s(i) + s(i-1)) !added by Lin 2023/12/14
         tempp(i)  = pp(i) + pth(i) * cn*real(lden)*qden*shalf**(lden-1)
      &                / (1.0 - cn*shalf**lden)
  10   end do
@@ -346,6 +349,7 @@
        dboot(i) = 0.5 * (boot(i) + boot(i-1))
        dboos(i) = 0.5 * (boos(i) + boos(i-1))
        shalf = 0.5 * (s(i) + s(i-1))
+       shalfs(i) = 0.5 * (s(i) + s(i-1)) !added by Lin 2023/12/14
        write(41,105) i, shalf, dboot(i), ftpsgn*ftp(i)*bjav(i)/bsqav(i)
      &           ,ftpsgn*ftp(i)*bjos(i)/bsqav(i) , bjav(i) ,gb(i), ft(i)
 !       write(42,106) i, shalf, pp(i), tempp(i),-ci(i)*ftp(i)/fpp(i)
@@ -371,22 +375,31 @@
 ! ...  READ PREVIOUSLY COMPUTED TOROIDAL BOOTSTRAP CURRENT
        read(43,108) (dboos(i),i=1,ni)
        read(43,109) jbiter
+       !read(48,108) shalf ! added by Lin 2023/12/14
+       read(48,108) (shalfs(i),i=1,ni) ! added by Lin 2023/12/14
        jbiter = min(nine,jbiter)
 ! ... COMBINE A FRACTION OF PREVIOUS BOOTSTRAP CURRENT WITH NEW
 ! ... BOOTSTRAP CURRENT FOR INPUT TO VMEC
         ! i=1, dboot(i) = artifitially current on axis (see paper from kc)
        do i = 1,ni
         dboot(i) = ftpsgn*ftp(i)*bjav(i)/bsqav(i)  ! fort.43 will be profile (S-C model)
+        shalfs(i) = 0.5 * (s(i) + s(i-1))
+        !WRITE(*,108) shalfs(i)
         !dboot(i) = ftpsgn*ftp(i)*(bjav(i)+ jdotb_aux) /bsqav(i) ! add current on axis
        end do 
+        shalfs(1) = 0.
+        shalfs(ni) = 1.
        do i = 1,ni
         dboot(i) = (jbiter * dboos(i) + dboot(i))/(jbiter+1) ! integrated combined BSJ current from part of each model
                                                              ! We should modify it to current profile, rather than integrated one
        end do
        jbiter = jbiter + 1
        rewind(43)
+       rewind(48)
        write(43,108)(dboot(i),i=1,ni)
        write(43,109) jbiter
+       write(48,108) (shalfs(i),i=1,ni) ! added by LIn 2023/12/14
+       !write(48,108) shalf ! added by LIn 2023/12/14
  105   format(i3,1p7e20.12)
  106   format(i3,1p6e14.6)
  107   format(' BOOTSTRAP CURRENT: = ',1p1e20.12,' N_20 = ',1p1e12.4,

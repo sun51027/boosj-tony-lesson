@@ -1,4 +1,4 @@
-               tcvsnak 
+               tcv_sna
 C
 C        MM  NMIN  NMAX   MMS NSMIN NSMAX NPROCS INSOL
          20    -4    +4    30    -3    30     1     0

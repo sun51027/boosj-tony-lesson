@@ -1,4 +1,4 @@
-               tcvsnak 
+               tcv_301
 C
 C        MM  NMIN  NMAX   MMS NSMIN NSMAX NPROCS INSOL
          20    -4    +4    30    -3    30     1     0
@@ -20,7 +20,7 @@ C
       LLAMPR      LVMTPR      LMETPR      LRIPPL
            0           0           0           0
       LRADMN      LRADMX      LNBALN      LNBALX
-           1         222          -4          +5
+          1          222          -4          +5
       LXYZPR      LIOTPL      LSKEWN      LMXBAL
            0           1          40          19
       LCURRF      LMESHP      LMESHV      LITERS
