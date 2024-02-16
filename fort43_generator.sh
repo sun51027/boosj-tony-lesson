@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Total count of 0.00000000E+00 = NS-3
-inputfile=${1}
+inputname=${1}
 value=${2}
 iteration=${3}
 total_count=$((value-3))
@@ -73,14 +73,34 @@ if [ "${iteration}" -eq 1 ]; then
    file_name="fort.43"
    generator;   
    cp fort.43 fort.48
-else
-   if [[ ${inputfile} == *_bootsj* ]]; then
-     truncated_string="${inputfile%%_bootsj*}"
+
+elif [ "${iteration}" -eq 2 ]; then
+   if [[ ${inputname} == *_bootsj* ]]; then
+     truncated_string="${inputname%%_bootsj*}"
      echo "Truncated string: $truncated_string"
    else
      echo "String does not contain '_bootsj', no truncation needed."
    fi
    cp fort.43_${truncated_string} fort.43
+   
+   file_name="fort.48"
+   generator;
+
+else
+   # to make tcv_30*_bootsj2 to become tcv_30*_bootsj1
+   # grep -oP '\d+$' extracts the numeric part at the end of the string.
+   numeric_part=$(echo "$inputname" | grep -oP '\d+$')
+
+   if [[ -n "$numeric_part" ]]; then
+       previous_iter=$((numeric_part - 1))
+       prev_inputname="${inputname%"$numeric_part"}$previous_iter"
+       echo "When iterating input.$inputname, we use the previous result $prev_inputname "
+   else
+       echo "Error:No numeric part found in the string. Exiting script."
+       exit 1
+   fi
+
+   cp fort.43_${prev_inputname} fort.43
    
    file_name="fort.48"
    generator;
