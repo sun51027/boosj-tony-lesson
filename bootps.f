@@ -393,10 +393,11 @@
        do i = 1,ni
         dboot(i) = (jbiter * dboos(i) + dboot(i))/(jbiter+1) ! integrated combined BSJ current from part of each model
        end do
-       do i = 1,ni
-         WRITE(*,*) shalfs(i), ' ' , dboot(i), ' ' ,bjav(i) 
-       end do
        jbiter = jbiter + 1
+       ! for debug
+       !do i = 1,ni
+       !  WRITE(*,*) shalfs(i), ' ' , dboot(i), ' ' ,bjav(i) 
+       !end do
        !read(49,108) (bjav(i)  ,i=1,ni) ! added by Lin 2024/3/6 if you read here, only 0 appears
        rewind(43)
        rewind(48)
