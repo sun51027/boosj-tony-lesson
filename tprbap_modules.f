@@ -5,7 +5,7 @@ c--------0---------0---------0---------0---------0---------0---------0-c
 !
       module tprb_param
 !
-      integer, parameter :: NI=58  !we skip the first and last half grid point. radial grid interval = ns-3 !24   !94   !!192        !128
+      integer, parameter :: NI=222  !we skip the first and last half grid point. radial grid interval = ns-3 !24   !94   !!192        !128
       integer, parameter :: NJ=101   !361  !1999    !241    !!101        !121
       integer, parameter :: NK=81  !81   !1   !81    !!121        !73
       integer, parameter :: NJK=NJ*NK
@@ -211,7 +211,7 @@ C
      &       ,g1av(:,:)               ,g4av(:,:)
      &       ,rlampl(:) ,gbplat(:)    ,rnue(:)    ,bgradgmn(:)
      &       ,bdgradb(:),bdgradg(:)   ,bdglnb(:)  ,bgradbmn(:)
-     &       ,shalfs(:) ! added by Lin 2023/12/14
+     &       ,shalfs(:) ,jaux(:) ! added by Lin 2023/12/14
 !
 !      COMMON /COBOOT/ pitch,bnorm,g2,g4,gb,g1mnin,g4mn,rl31,rl32e,rl32i
 !     &               ,gc,boot,bsqav,bsqmax,ft,fc,g2av,tempp,dboot,bjav

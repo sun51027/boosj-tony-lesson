@@ -46,7 +46,7 @@ function generator(){
    fi
    #cp fort.43 fort.48
    # Display the contents of the generated file
-   cat "$file_name"
+   # cat "$file_name"
 }
 
 
@@ -69,10 +69,11 @@ mv *.o *.mod obj/
 if [ "${iteration}" -eq 1 ]; then
 
    # Remove existing fort.43 file
-   rm fort.43 fort.48
+   rm fort.43 fort.48 fort.49
    file_name="fort.43"
    generator;   
    cp fort.43 fort.48
+   cp fort.43 fort.49
 
 elif [ "${iteration}" -eq 2 ]; then
    if [[ ${inputname} == *_bootsj* ]]; then
@@ -82,6 +83,7 @@ elif [ "${iteration}" -eq 2 ]; then
      echo "String does not contain '_bootsj', no truncation needed."
    fi
    cp fort.43_${truncated_string} fort.43
+   cp fort.49_${truncated_string} fort.49
    
    file_name="fort.48"
    generator;
@@ -101,6 +103,7 @@ else
    fi
 
    cp fort.43_${prev_inputname} fort.43
+   cp fort.49_${prev_inputname} fort.49
    
    file_name="fort.48"
    generator;

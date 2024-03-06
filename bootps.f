@@ -6,7 +6,7 @@
      &s,vp,ftp,fpp,ci,cj,pth,pp,ppi,tempp,tpi,boot,bjav,sqgbsq,
      &dboot,rl31,rl32e,rl32i,jkmax,bsqav,bsqmax,djp,bdgradg,bdgradb,
      &bgradbmn,bgradgmn,bdglnb,gbplat,rlampl,rnue
-     &,shalfs) !added by Lin 2023/12/14
+     &,shalfs,jaux) !added by Lin 2023/12/14
 ! 
 ! .. IMPLICITS
       implicit none
@@ -21,6 +21,7 @@
      &,rlampl(*),rnue(*),bdgradb(*),bdgradg(*),bdglnb(*),bgradbmn(*)
      &,bgradgmn(*)!,shalfs(*)! added by Lin 2023/12/14
       REAL, DIMENSION(*) :: shalfs
+      REAL, DIMENSION(*) :: jaux
       integer :: mb(*),nb(*),ni,njk,lmnb,npitch,jkmax(*)
 !           
 ! ... LOCAL SCALARS
@@ -375,8 +376,8 @@
 ! ...  READ PREVIOUSLY COMPUTED TOROIDAL BOOTSTRAP CURRENT
        read(43,108) (dboos(i),i=1,ni)
        read(43,109) jbiter
-       !read(48,108) shalf ! added by Lin 2023/12/14
        read(48,108) (shalfs(i),i=1,ni) ! added by Lin 2023/12/14
+       read(49,108) (bjav(i),i=1,ni) ! added by Lin 2024/3/5
        jbiter = min(nine,jbiter)
 ! ... COMBINE A FRACTION OF PREVIOUS BOOTSTRAP CURRENT WITH NEW
 ! ... BOOTSTRAP CURRENT FOR INPUT TO VMEC
@@ -384,22 +385,25 @@
        do i = 1,ni
         dboot(i) = ftpsgn*ftp(i)*bjav(i)/bsqav(i)  ! fort.43 will be profile (S-C model)
         shalfs(i) = 0.5 * (s(i) + s(i-1))
-        !WRITE(*,108) shalfs(i)
-        !dboot(i) = ftpsgn*ftp(i)*(bjav(i)+ jdotb_aux) /bsqav(i) ! add current on axis
+        jaux(i) = -0.31*(1.0-TANH((shalfs(i)-(1./ni))/(1.0/ni)))
+        write(*,*) i, " bjav ",bjav(i), ", jaux ", jaux(i) ! print jaux
+        !dboot(i) = ftpsgn*ftp(i)*(bjav(i)+ jaux(i)) /bsqav(i) ! add current on axis
        end do 
         shalfs(1) = 0.
         shalfs(ni) = 1.
        do i = 1,ni
         dboot(i) = (jbiter * dboos(i) + dboot(i))/(jbiter+1) ! integrated combined BSJ current from part of each model
                                                              ! We should modify it to current profile, rather than integrated one
+        write(*,*) i, dboot(i), bjav(i)
        end do
        jbiter = jbiter + 1
        rewind(43)
        rewind(48)
+       rewind(49)
        write(43,108)(dboot(i),i=1,ni)
        write(43,109) jbiter
        write(48,108) (shalfs(i),i=1,ni) ! added by LIn 2023/12/14
-       !write(48,108) shalf ! added by LIn 2023/12/14
+       write(49,108) (bjav(i),i=1,ni) ! added by Lin 2024/3/5
  105   format(i3,1p7e20.12)
  106   format(i3,1p6e14.6)
  107   format(' BOOTSTRAP CURRENT: = ',1p1e20.12,' N_20 = ',1p1e12.4,
