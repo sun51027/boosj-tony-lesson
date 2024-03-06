@@ -384,14 +384,14 @@
        do i = 1,ni
         dboot(i) = ftpsgn*ftp(i)*bjav(i)/bsqav(i)  ! fort.43 will be profile (S-C model)
         shalfs(i) = 0.5 * (s(i) + s(i-1))
-        !WRITE(*,108) shalfs(i)
+        !jaux(i) = -0.31*(1.0-TANH((shalfs(i)-(1./ni))/(1.0/ni)))
+        !write(*,*) i, " bjav ",bjav(i), ", jaux ", jaux(i)
         !dboot(i) = ftpsgn*ftp(i)*(bjav(i)+ jdotb_aux) /bsqav(i) ! add current on axis
        end do 
         shalfs(1) = 0.
         shalfs(ni) = 1.
        do i = 1,ni
         dboot(i) = (jbiter * dboos(i) + dboot(i))/(jbiter+1) ! integrated combined BSJ current from part of each model
-                                                             ! We should modify it to current profile, rather than integrated one
        end do
        do i = 1,ni
          WRITE(*,*) shalfs(i), ' ' , dboot(i), ' ' ,bjav(i) 
