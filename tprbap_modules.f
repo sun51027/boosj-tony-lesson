@@ -211,7 +211,7 @@ C
      &       ,g1av(:,:)               ,g4av(:,:)
      &       ,rlampl(:) ,gbplat(:)    ,rnue(:)    ,bgradgmn(:)
      &       ,bdgradb(:),bdgradg(:)   ,bdglnb(:)  ,bgradbmn(:)
-     &       ,shalfs(:) ,jaux(:) ! added by Lin 2023/12/14
+     &       ,shalfs(:) ,jaux(:) , density(:), densityp(:) ! added by Lin 2023/12/14 & 240614
 !
 !      COMMON /COBOOT/ pitch,bnorm,g2,g4,gb,g1mnin,g4mn,rl31,rl32e,rl32i
 !     &               ,gc,boot,bsqav,bsqmax,ft,fc,g2av,tempp,dboot,bjav

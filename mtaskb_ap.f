@@ -127,7 +127,7 @@ C..MODIFICATION 08/08/11  --- FBJAC OUTPUT TO fort.37 FOR M. ALBERGANTE
      &s,vp,ftp,fpp,ci,cj,pth,pp,ppi,tempp,tpi,boot,bjav,sqgbsq,
      &dboot,rl31,rl32e,rl32i,jkmax,bsqav,bsqmax,djp,bdgradg,bdgradb,
      &bgradbmn,bgradgmn,bdglnb,gbplat,rlampl,rnue
-     &,shalfs,jaux) !added by Lin 2023/12/14
+     &,shalfs,jaux,density,densityp) !added by Lin 2023/12/14 & 240614
       end if
 !
       return

@@ -1,4 +1,12 @@
 #!/bin/bash
+#  VMEC -> vmec2tpr -> bootsj
+#  Coupled with bootsj_quick.sh
+#  Create fort.43, fort.48 for running bootstrap current
+#
+#
+#  Created by Lin Shih
+#  2023/12/11 
+#
 
 # Total count of 0.00000000E+00 = NS-3
 inputname=${1}

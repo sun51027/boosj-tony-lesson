@@ -208,7 +208,8 @@ C...FORMERLY Variables in Common Block /COBOOT/
      &       ,g1av(NPITCH,NI)             ,g4av(NPITCH,NI)
      &       ,rlampl(NI)   ,gbplat(NI)    ,rnue(NI)   ,bgradgmn(MLMNB)
      &       ,bdgradb(NJK) ,bdgradg(NJK)  ,bdglnb(NJK),bgradbmn(MLMNB)
-     &       ,shalfs(NI)   ,jaux(NI) ,stat=ierr17) !added by Lin 2024/1/8
+     &       ,shalfs(NI)   ,jaux(NI) ,density(NI), densityp(NI),
+     &        stat=ierr17) !added by Lin 2024/1/8 & 240614
 !      COMMON /COBOOT/ pitch,bnorm,g2,g4,gb,g1mnin,g4mn,rl31,rl32e,rl32i
 !     &               ,gc,boot,bsqav,bsqmax,ft,fc,g2av,tempp,dboot,bjav
 !     &               ,g1av,g4av,jkmax,gbplat,rlampl,rnue,bdgradg,bdgradb

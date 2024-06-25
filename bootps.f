@@ -6,7 +6,7 @@
      &s,vp,ftp,fpp,ci,cj,pth,pp,ppi,tempp,tpi,boot,bjav,sqgbsq,
      &dboot,rl31,rl32e,rl32i,jkmax,bsqav,bsqmax,djp,bdgradg,bdgradb,
      &bgradbmn,bgradgmn,bdglnb,gbplat,rlampl,rnue
-     &,shalfs) !added by Lin 2023/12/14
+     &,shalfs,density,densityp) !added by Lin 2023/12/14
 ! 
 ! .. IMPLICITS
       implicit none
@@ -19,7 +19,7 @@
      &,g4mn(*),boot(0:*),bjav(*),dboot(*),rl31(*),rl32e(*),rl32i(*)
      &,bsqav(*),bsqmax(*),tempp(*),pp(*),pth(*),ppi(*),sqgbsq(*)
      &,rlampl(*),rnue(*),bdgradb(*),bdgradg(*),bdglnb(*),bgradbmn(*)
-     &,bgradgmn(*)!,shalfs(*)! added by Lin 2023/12/14
+     &,bgradgmn(*),density(*),densityp(*)! added by Lin 2023/12/14
       REAL, DIMENSION(*) :: shalfs
       integer :: mb(*),nb(*),ni,njk,lmnb,npitch,jkmax(*)
 !           
@@ -76,8 +76,26 @@
         gbplat(i) = zero
         shalf     = 0.5 * (s(i) + s(i-1))
         shalfs(i) = 0.5 * (s(i) + s(i-1)) !added by Lin 2023/12/14
-        tempp(i)  = pp(i) + pth(i) * cn*real(lden)*qden*shalf**(lden-1)
-     &                / (1.0 - cn*shalf**lden)
+!        tempp(i) = 0. ! Added by Lin 2024/5/14
+        ! density densityp tempp are added by Lin 2024/6/14
+!        density(i) = 1.06 * (0.3105 * (1 - shalf) * (1 - shalf**2) & 
+!                     + 0.6333 * (1 - shalf**10)**2)
+! ... EPFL's thesis
+!         density(i) = 1.06 * (0.3105 * (1 - shalf) * (1 - shalf**2))  
+!     &                      + 1.06 * (0.6333 * (1 - shalf**10)**2)
+!
+!         densityp(i) = 1.06*(-0.3105 - 0.3105*2*shalf)
+!     &                 + 1.06*0.3105*3*shalf**2
+!     &                 - 1.06*20*0.6333*shalf**9
+!     &                 + 1.06*20*0.6333*shalf**19
+! ... Miller's pressure profile
+        !densityp(i) =  -1/0.06875 * (0.025+0.975*shalf**3 - shalf**4)
+        !density(i) = 1 - 0.3639*shalf - 3.548*shalf**4 + 2.9112*shalf**5
+        density(i) = 1.0 - shalf - shalf**4 + shalf**5
+        densityp(i) = -1.0 - 4*shalf**3 + 5*shalf**4
+        tempp(i)  = pp(i) - pth(i) * densityp(i)/density(i)
+!        tempp(i)  = pp(i) + pth(i) * cn*real(lden)*qden*shalf**(lden-1)
+!     &                / (1.0 - cn*shalf**lden)
  10   end do
 ! ... DETERMINE BSQ-max, B/B-max and  B-average ON EACH FLUX SURFACE
 ! ... DETERMINE jkmax, THE INDEX FOR WHICH BSQ=BSQ-max
@@ -273,7 +291,13 @@
         fc(i) = 0.75 * bsqav(i) * fc(i) / bsqmax(i)
         ft(i) = 1.0 - fc(i)
         gb(i) = (g2av(i) - 0.75 * bsqav(i) * gb(i) / bsqmax(i)) / ft(i)
-        densty= dn20*(1.0-0.5*cn*(s(i)+s(i-1))**lden)**qden
+        !densty= dn20*(1.0-0.5*cn*(s(i)+s(i-1))**lden)**qden
+        ! Added by Lin 240614
+        shalf     = 0.5 * (s(i) + s(i-1))
+!        densty = dn20*1.06*(0.3105*(1 - shalf) * (1 - shalf**2))  
+!     &               + dn20* 1.06 * (0.6333 * (1 - shalf**10)**2)
+!        densty = 1 - 0.3639*shalf - 3.548*shalf**4 + 2.9112*shalf**5
+        densty = 1.0 - shalf - shalf**4 + shalf**5
         rlame = 0.25e6*(1+zeff)*pth(i)*pth(i)/(zeff*densty)**3
         rnue(i)= 4.0 * ft(i) * rlampl(i) / (3.0*sqrtpi * fc(i) * rlame)
  85   end do
@@ -405,7 +429,7 @@
        write(43,108)(dboot(i),i=1,ni)
        write(43,109) jbiter
        write(48,108) (shalfs(i),i=1,ni) ! added by LIn 2023/12/14
-       write(49,108) (bjav(i),i=1,ni) ! added by LIn 2024/3/6
+       write(49,108) (tempp(i),i=1,ni) ! added by LIn 2024/3/6
        !write(48,108) shalf ! added by LIn 2023/12/14
  105   format(i3,1p7e20.12)
  106   format(i3,1p6e14.6)
